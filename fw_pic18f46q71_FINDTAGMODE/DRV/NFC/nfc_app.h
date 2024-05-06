@@ -50,9 +50,9 @@
 //================================================================
 
 #define ENABLE_14443A
-#define ENABLE_14443B
-#define ENABLE_15693
-#define ENABLE_FELICA
+//#define ENABLE_14443B
+//#define ENABLE_15693
+//#define ENABLE_FELICA
 
 //================================================================
 

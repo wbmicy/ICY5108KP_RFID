@@ -197,6 +197,9 @@ void main(void)
     // Initialize all enabled technology layers
     NFC_init();
 
+    INT1_SetInterruptHandler(TRF79xxA_irqHandler);
+    TMR1_OverflowCallbackRegister(TRF79xxA_timerHandler);
+    
     // Enable global interrupts
     INTERRUPT_GlobalInterruptEnable();//__bis_SR_register(GIE);
 

@@ -192,9 +192,9 @@ SPI_readCont(uint8_t * pui8Buffer, uint8_t ui8Length)
 		*pui8Buffer = SPI_receiveByte();
 		pui8Buffer++;
 	}
-	while(UCB0STAT & UCBUSY)
-	{
-	}
+//	while(UCB0STAT & UCBUSY)
+//	{
+//	}
 
 #if (TRF79xxA_VERSION == 60)
 	UCB0CTL0 |= UCCKPH;						// Switch Clock Polarity back

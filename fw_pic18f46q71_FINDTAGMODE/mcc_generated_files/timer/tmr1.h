@@ -125,6 +125,13 @@ void TMR1_StartSinglePulseAcquisition(void);
  */
 uint8_t TMR1_CheckGateValueStatus(void);
 
+/**
+ * @ingroup tmr1
+ * @brief Timer Interrupt Service Routine (ISR) called by the Interrupt Manager for overflow.
+ * @param None.
+ * @return None.
+ */
+void TMR1_OverflowISR(void);
 
 /**
  * @ingroup tmr1
@@ -134,13 +141,6 @@ uint8_t TMR1_CheckGateValueStatus(void);
  */
  void TMR1_OverflowCallbackRegister(void (* CallbackHandler)(void));
 
-/**
- * @ingroup tmr1
- * @brief Performs the tasks to be executed on timer overflow event.
- * @param None.
- * @return None.
- */
-void TMR1_Tasks(void);
 
 /**
  * @ingroup tmr1

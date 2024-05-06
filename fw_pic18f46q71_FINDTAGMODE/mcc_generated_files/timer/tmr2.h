@@ -373,19 +373,20 @@ void Timer2_PeriodCountSet(size_t periodVal);
 
 /**
  * @ingroup tmr2
+ * @brief Interrupt Service Routine (ISR) for TMR2 overflow interrupt.
+ * @param None.
+ * @return None.
+ */
+void Timer2_ISR(void);
+
+/**
+ * @ingroup tmr2
  * @brief Setter function for the TMR2 overflow callback.
  * @param CallbackHandler - Pointer to the custom callback.
  * @return None.
  */
 void Timer2_OverflowCallbackRegister(void (* InterruptHandler)(void));
 
-/**
- * @ingroup tmr2
- * @brief Performs the tasks to be executed on timer overflow event.
- * @param None.
- * @return None.
- */
-void Timer2_Tasks(void);
 
 #endif // TMR2_H
 /**

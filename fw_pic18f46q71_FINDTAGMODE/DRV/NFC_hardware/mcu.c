@@ -65,18 +65,22 @@ static uint16_t ui16VLOConst;
 
 void MCU_setCounter(uint16_t ui16mSecTimeout)
 {
-	// Max delay = 3.2 seconds (to cover maximum VLO speed of 20kHz)
-	if (ui16mSecTimeout > 3200)
-	{
-		ui16mSecTimeout = 3200;
-	}
-
-	TA0CTL |= TACLR;						// Clear Counter
-	TA0CTL &= ~TASSEL_3;					// Clear Source Clock Settings
-
-    TA0CCTL0 = CCIE;                		// compare interrupt enable
-    COUNTER_VALUE = (((ui16VLOConst+1) * ui16mSecTimeout)>>1); // Div by 2 due to ACLK divider
-    TA0CTL |= MC_1 + TASSEL_1;      		// Source from ACLK, Up Mode
+    // Max delay = 3.2 seconds (to cover maximum VLO speed of 20kHz)
+    if (ui16mSecTimeout > 3200)
+    {
+            ui16mSecTimeout = 3200;
+    }
+    STOP_COUNTER
+    RESET_COUNTER
+    COUNTER_VALUE(ui16mSecTimeout)
+    START_COUNTER
+           
+//    TA0CTL |= TACLR;						// Clear Counter
+//    TA0CTL &= ~TASSEL_3;					// Clear Source Clock Settings
+//
+//    TA0CCTL0 = CCIE;                		// compare interrupt enable
+//    COUNTER_VALUE = (((ui16VLOConst+1) * ui16mSecTimeout)>>1); // Div by 2 due to ACLK divider
+//    TA0CTL |= MC_1 + TASSEL_1;      		// Source from ACLK, Up Mode
 }
 
 //*****************************************************************************
@@ -111,36 +115,36 @@ void MCU_delayMillisecond(uint32_t n_ms)
 //
 //*****************************************************************************
 
-void MCU_initClock(void)
-{
-    // select DCO to 8MHz
-
-	if (CALBC1_8MHZ==0xFF)					// If calibration constant erased
-	{
-		while(1);                               // do not load, trap CPU!!
-	}
-
-	// Follow recommended flow. First, clear all DCOx and MODx bits.
-	// Then apply new RSELx values. Finally, apply new DCOx and MODx bit
-	// values.
-	DCOCTL = 0x00;
-	BCSCTL1 = CALBC1_8MHZ;
-	DCOCTL = CALDCO_8MHZ;
-
-    // Disable XT1 pins
-    P2SEL &= ~(BIT6 + BIT7);
-
-    // Disable XT1 high frequency mode, ACLK divider = /2
-    BCSCTL1 &= ~XTS;
-    BCSCTL1 |= DIVA_1;
-
-    // Set ACLK source to VLO (~12kHz) - with ACLK divider, 12kHz/2 = ACLK speed = 6kHz
-    BCSCTL3 |= LFXT1S_2;
-
-    __delay_cycles(1000);
-
-	return;
-}
+//void MCU_initClock(void)
+//{
+//    // select DCO to 8MHz
+//
+//	if (CALBC1_8MHZ==0xFF)					// If calibration constant erased
+//	{
+//		while(1);                               // do not load, trap CPU!!
+//	}
+//
+//	// Follow recommended flow. First, clear all DCOx and MODx bits.
+//	// Then apply new RSELx values. Finally, apply new DCOx and MODx bit
+//	// values.
+//	DCOCTL = 0x00;
+//	BCSCTL1 = CALBC1_8MHZ;
+//	DCOCTL = CALDCO_8MHZ;
+//
+//    // Disable XT1 pins
+//    P2SEL &= ~(BIT6 + BIT7);
+//
+//    // Disable XT1 high frequency mode, ACLK divider = /2
+//    BCSCTL1 &= ~XTS;
+//    BCSCTL1 |= DIVA_1;
+//
+//    // Set ACLK source to VLO (~12kHz) - with ACLK divider, 12kHz/2 = ACLK speed = 6kHz
+//    BCSCTL3 |= LFXT1S_2;
+//
+//    __delay_cycles(1000);
+//
+//	return;
+//}
 
 //*****************************************************************************
 //
@@ -158,17 +162,17 @@ void MCU_initClock(void)
 //
 //*****************************************************************************
 
-void MCU_calculateVLOFreq(void)
-{
-	int16_t i16VLOCalib;
-	uint32_t ui32VLOFreq;
-
-	i16VLOCalib = TI_measureVLO();		// VLO_Calib = number of 1MHz cycles in 8 ACLK cycles
-
-	ui32VLOFreq = 8000000 / i16VLOCalib;
-
-	ui16VLOConst = ui32VLOFreq / 1000;
-}
+//void MCU_calculateVLOFreq(void)
+//{
+//	int16_t i16VLOCalib;
+//	uint32_t ui32VLOFreq;
+//
+//	i16VLOCalib = TI_measureVLO();		// VLO_Calib = number of 1MHz cycles in 8 ACLK cycles
+//
+//	ui32VLOFreq = 8000000 / i16VLOCalib;
+//
+//	ui16VLOConst = ui32VLOFreq / 1000;
+//}
 
 
 //*****************************************************************************

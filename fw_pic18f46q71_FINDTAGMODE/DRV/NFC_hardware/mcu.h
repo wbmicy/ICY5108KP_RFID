@@ -62,10 +62,10 @@
 #define IRQ_PIN_SET
 #define IRQ_PIN
 #define IRQ_PORT
-#define IRQ_ON
-#define IRQ_OFF	
-#define IRQ_EDGE_SET		// Rising edge interrupt
-#define IRQ_CLR
+#define IRQ_ON          EXT_INT1_InterruptEnable();
+#define IRQ_OFF         EXT_INT1_InterruptDisable();
+#define IRQ_EDGE_SET	EXT_INT1_risingEdgeSet();	// Rising edge interrupt
+#define IRQ_CLR         EXT_INT1_InterruptFlagClear();
 #define IRQ_REQ_REG
 
 #define LED_PORT_SET	
@@ -116,10 +116,10 @@
 //-----Counter-timer constants-----------------------------------
 
 #ifdef PIC18F46Q71_CONFIG
-#define COUNTER_VALUE 	Timer1_Read(); //TA0CCR0					//counter register
-#define START_COUNTER   Timer1_Start(); //	TA0CTL |=  MC0			//start counter in up mode
-#define STOP_COUNTER	Timer1_Stop(); //TA0CTL &= ~(MC0 + MC1)	//stops the counter
-#define RESET_COUNTER   Timer1_Write(0);//TA0CTL |= TACLR	    	//Resets and stops counter.
+#define COUNTER_VALUE(a) {TMR1_PeriodCountSet((a));TMR1_Reload();} //TA0CCR0					//counter register
+#define START_COUNTER   TMR1_Start(); //	TA0CTL |=  MC0			//start counter in up mode
+#define STOP_COUNTER	TMR1_Stop(); //TA0CTL &= ~(MC0 + MC1)	//stops the counter
+#define RESET_COUNTER   {TMR1_Stop();TMR1_Reload();}//TA0CTL |= TACLR	    	//Resets and stops counter.
 
 #elif MSP430_CONFIG
 
@@ -129,16 +129,19 @@
 #define RESET_COUNTER   TA0CTL |= TACLR	    	//Resets and stops counter.
 #endif
 //===============================================================
-
+#ifdef PIC18F46Q71_CONFIG
+#define DELAY_1ms       (_XTAL_FREQ/4000)
+#elif MSP430_CONFIG
 #define DELAY_1ms		8000	// Used for McuDelayMillisecond
-
+#endif
 //===============================================================
 
 void MCU_setCounter(uint16_t ui16mSecTimeout);
 void MCU_delayMillisecond(uint32_t n_ms);
-void MCU_initClock(void);
-void MCU_calculateVLOFreq(void);
+//void MCU_initClock(void);
+//void MCU_calculateVLOFreq(void);
 
+#define __delay_cycles(x)   _delay(x)
 //===============================================================
 
 #endif

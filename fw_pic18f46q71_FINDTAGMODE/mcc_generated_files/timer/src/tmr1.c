@@ -47,9 +47,9 @@ const struct TMR_INTERFACE tmr1 = {
     .Initialize = TMR1_Initialize,
     .Start = TMR1_Start,
     .Stop = TMR1_Stop,
-    .PeriodCountSet = TMR1_Write,
+    .PeriodCountSet = TMR1_PeriodCountSet,
     .TimeoutCallbackRegister = TMR1_OverflowCallbackRegister,
-    .Tasks = TMR1_Tasks
+    .Tasks = NULL
 };
 static void (*TMR1_OverflowCallback)(void);
 static void TMR1_DefaultOverflowCallback(void);
@@ -80,12 +80,13 @@ void TMR1_Initialize(void)
     //Set default callback for TMR1 gate interrupt
     TMR1_GateCallbackRegister(TMR1_DefaultGateCallback);
 
-    //Clear interrupt flags
-    PIR3bits.TMR1IF = 0;
-    PIR3bits.TMR1GIF = 0;
+    // Clearing TMRI IF flag before enabling the interrupt.
+     PIR3bits.TMR1IF = 0;
+    // Enabling TMRI interrupt.
+     PIE3bits.TMR1IE = 1;
     
-    //TMRON disabled; TRD16 disabled; nTSYNC do_not_synchronize; TCKPS 1:8; 
-    T1CON = 0x34;
+    //TMRON disabled; TRD16 enabled; nTSYNC do_not_synchronize; TCKPS 1:8; 
+    T1CON = 0x36;
 }
 
 void TMR1_Start(void)
@@ -156,6 +157,18 @@ uint8_t TMR1_CheckGateValueStatus(void)
     return (T1GCONbits.T1GVAL);
 }
 
+void TMR1_OverflowISR(void)
+{
+
+    // Clear the TMR1 interrupt flag
+    PIR3bits.TMR1IF = 0;
+    TMR1_Write(timer1ReloadVal);
+
+    if(TMR1_OverflowCallback)
+    {
+        TMR1_OverflowCallback();
+    }
+}
 
 void TMR1_OverflowCallbackRegister(void (* CallbackHandler)(void))
 {
@@ -194,14 +207,6 @@ static void TMR1_DefaultGateCallback(void)
     //Use TMR1_GateCallbackRegister function to use Custom ISR
 }
 
-void TMR1_Tasks(void)
-{
-    if(PIR3bits.TMR1IF)
-    {
-        PIR3bits.TMR1IF = 0;
-        TMR1_OverflowCallback();
-    }
-}
 
 /**
   End of File

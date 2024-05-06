@@ -58,7 +58,7 @@ void  INTERRUPT_Initialize (void)
     EXT_INT1_risingEdgeSet();    
     // Set Default Interrupt Handler
     INT1_SetInterruptHandler(INT1_DefaultInterruptHandler);
-    // EXT_INT1_InterruptEnable();
+    EXT_INT1_InterruptEnable();
 
     // Clear the interrupt flag
     // Set the external interrupt edge detect
@@ -70,6 +70,33 @@ void  INTERRUPT_Initialize (void)
 
 }
 
+/**
+ * @ingroup interrupt
+ * @brief Executes whenever a high-priority interrupt is triggered. This routine checks the source of the interrupt and calls the relevant interrupt function.
+ * @pre INTERRUPT_Initialize() is already called.
+ * @param None.
+ * @return None.
+ */
+void __interrupt() INTERRUPT_InterruptManager (void)
+{
+    // interrupt handler
+    if(PIE6bits.INT1IE == 1 && PIR6bits.INT1IF == 1)
+    {
+        INT1_ISR();
+    }
+    else if(PIE3bits.TMR2IE == 1 && PIR3bits.TMR2IF == 1)
+    {
+        Timer2_ISR();
+    }
+    else if(PIE3bits.TMR1IE == 1 && PIR3bits.TMR1IF == 1)
+    {
+        TMR1_OverflowISR();
+    }
+    else
+    {
+        //Unhandled Interrupt
+    }
+}
 
 void INT0_ISR(void)
 {

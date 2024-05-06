@@ -89,6 +89,26 @@
 #define TRF_SS_SetAnalogMode()      do { ANSELAbits.ANSELA4 = 1; } while(0)
 #define TRF_SS_SetDigitalMode()     do { ANSELAbits.ANSELA4 = 0; } while(0)
 
+// get/set RB1 aliases
+#define TRF_IRQ_TRIS                 TRISBbits.TRISB1
+#define TRF_IRQ_LAT                  LATBbits.LATB1
+#define TRF_IRQ_PORT                 PORTBbits.RB1
+#define TRF_IRQ_WPU                  WPUBbits.WPUB1
+#define TRF_IRQ_OD                   ODCONBbits.ODCB1
+#define TRF_IRQ_ANS                  ANSELBbits.ANSELB1
+#define TRF_IRQ_SetHigh()            do { LATBbits.LATB1 = 1; } while(0)
+#define TRF_IRQ_SetLow()             do { LATBbits.LATB1 = 0; } while(0)
+#define TRF_IRQ_Toggle()             do { LATBbits.LATB1 = ~LATBbits.LATB1; } while(0)
+#define TRF_IRQ_GetValue()           PORTBbits.RB1
+#define TRF_IRQ_SetDigitalInput()    do { TRISBbits.TRISB1 = 1; } while(0)
+#define TRF_IRQ_SetDigitalOutput()   do { TRISBbits.TRISB1 = 0; } while(0)
+#define TRF_IRQ_SetPullup()          do { WPUBbits.WPUB1 = 1; } while(0)
+#define TRF_IRQ_ResetPullup()        do { WPUBbits.WPUB1 = 0; } while(0)
+#define TRF_IRQ_SetPushPull()        do { ODCONBbits.ODCB1 = 0; } while(0)
+#define TRF_IRQ_SetOpenDrain()       do { ODCONBbits.ODCB1 = 1; } while(0)
+#define TRF_IRQ_SetAnalogMode()      do { ANSELBbits.ANSELB1 = 1; } while(0)
+#define TRF_IRQ_SetDigitalMode()     do { ANSELBbits.ANSELB1 = 0; } while(0)
+
 // get/set RB4 aliases
 #define TRF_MOSI_TRIS                 TRISBbits.TRISB4
 #define TRF_MOSI_LAT                  LATBbits.LATB4
@@ -208,26 +228,6 @@
 #define TRF_EN2_SetOpenDrain()       do { ODCONDbits.ODCD1 = 1; } while(0)
 #define TRF_EN2_SetAnalogMode()      do { ANSELDbits.ANSELD1 = 1; } while(0)
 #define TRF_EN2_SetDigitalMode()     do { ANSELDbits.ANSELD1 = 0; } while(0)
-
-// get/set RD3 aliases
-#define TRF_IRQ_TRIS                 TRISDbits.TRISD3
-#define TRF_IRQ_LAT                  LATDbits.LATD3
-#define TRF_IRQ_PORT                 PORTDbits.RD3
-#define TRF_IRQ_WPU                  WPUDbits.WPUD3
-#define TRF_IRQ_OD                   ODCONDbits.ODCD3
-#define TRF_IRQ_ANS                  ANSELDbits.ANSELD3
-#define TRF_IRQ_SetHigh()            do { LATDbits.LATD3 = 1; } while(0)
-#define TRF_IRQ_SetLow()             do { LATDbits.LATD3 = 0; } while(0)
-#define TRF_IRQ_Toggle()             do { LATDbits.LATD3 = ~LATDbits.LATD3; } while(0)
-#define TRF_IRQ_GetValue()           PORTDbits.RD3
-#define TRF_IRQ_SetDigitalInput()    do { TRISDbits.TRISD3 = 1; } while(0)
-#define TRF_IRQ_SetDigitalOutput()   do { TRISDbits.TRISD3 = 0; } while(0)
-#define TRF_IRQ_SetPullup()          do { WPUDbits.WPUD3 = 1; } while(0)
-#define TRF_IRQ_ResetPullup()        do { WPUDbits.WPUD3 = 0; } while(0)
-#define TRF_IRQ_SetPushPull()        do { ODCONDbits.ODCD3 = 0; } while(0)
-#define TRF_IRQ_SetOpenDrain()       do { ODCONDbits.ODCD3 = 1; } while(0)
-#define TRF_IRQ_SetAnalogMode()      do { ANSELDbits.ANSELD3 = 1; } while(0)
-#define TRF_IRQ_SetDigitalMode()     do { ANSELDbits.ANSELD3 = 0; } while(0)
 
 // get/set RD4 aliases
 #define LOCK_LED_TRIS                 TRISDbits.TRISD4

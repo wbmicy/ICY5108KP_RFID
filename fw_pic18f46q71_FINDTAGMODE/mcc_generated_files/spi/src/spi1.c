@@ -64,13 +64,13 @@ typedef struct
 //con0 == SPIxCON0, con1 == SPIxCON1, con2 == SPIxCON2, baud == SPIxBAUD, operation == Host/Client
 static const spi1_configuration_t spi1_configuration[] = 
 {   
-    { 0x2, 0x40, 0x0, 0x7, 0 }
+    { 0x2, 0x0, 0x0, 0x7, 0 }
 };
 
 void SPI1_Initialize(void)
 {
-    //SDOP active high; SDIP active high; SSP active high; FST disabled; CKP Idle:Low, Active:High; CKE Active to idle; SMP Middle; 
-    SPI1CON1 = 0x40;
+    //SDOP active high; SDIP active high; SSP active high; FST disabled; CKP Idle:Low, Active:High; CKE Idle to active; SMP Middle; 
+    SPI1CON1 = 0x0;
     //RXR data is not stored in the FIFO; TXR not required for a transfer; SSET disabled; 
     SPI1CON2 = 0x0;
     //CLKSEL FOSC; 

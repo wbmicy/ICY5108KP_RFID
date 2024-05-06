@@ -1285,9 +1285,9 @@ bool TRF79xxA_checkExternalRfField(void)
 //
 //===============================================================
 
-#pragma vector=TIMER0_A0_VECTOR
-__interrupt void
-TRF79xxA_timerHandler(void)
+//#pragma vector=TIMER0_A0_VECTOR
+//__interrupt void
+void TRF79xxA_timerHandler(void)
 {
 	uint8_t ui8IrqStatus;
 
@@ -1322,9 +1322,9 @@ TRF79xxA_timerHandler(void)
 //
 //===============================================================
 
-#pragma vector = PORT2_VECTOR
-__interrupt void
-TRF79xxA_irqHandler(void)							// interrupt handler
+//#pragma vector = PORT2_VECTOR
+//__interrupt void
+void TRF79xxA_irqHandler(void)							// interrupt handler
 {
 	uint8_t ui8IrqStatus;
 
@@ -1350,8 +1350,9 @@ TRF79xxA_irqHandler(void)							// interrupt handler
 
 
 		}
-	} while((IRQ_PORT & IRQ_PIN) == IRQ_PIN);
-	__bic_SR_register_on_exit(LPM0_bits);
+        }while(TRF_IRQ_GetValue() == 1);
+	//} while((IRQ_PORT & IRQ_PIN) == IRQ_PIN);
+	//__bic_SR_register_on_exit(LPM0_bits);
 }
 
 //*****************************************************************************
