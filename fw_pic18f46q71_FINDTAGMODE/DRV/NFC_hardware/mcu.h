@@ -34,18 +34,55 @@
  *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  *  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
-*/
+ */
 
 #ifndef MCU_H_
 #define MCU_H_
 
 //===============================================================
-
+#ifdef PIC18F46Q71_CONFIG
+#include "../../mcc_generated_files/system/system.h"
+#elif MSP430_CONFIG
 #include "MSP430.h" 		// Processor specific header
+#else
+#error "not supported config"
+#endif
+
+
 #include "types.h"
 #include "VLO_Library.h"
 
 //=====MCU constants=============================================
+#ifdef PIC18F46Q71_CONFIG
+
+#define TRF_ENABLE_SET
+#define	TRF_ENABLE		TRF_EN_SetHigh()		// EN pin on the TRF7970A
+#define TRF_DISABLE		TRF_EN_SetLow()
+
+#define IRQ_PIN_SET
+#define IRQ_PIN
+#define IRQ_PORT
+#define IRQ_ON
+#define IRQ_OFF	
+#define IRQ_EDGE_SET		// Rising edge interrupt
+#define IRQ_CLR
+#define IRQ_REQ_REG
+
+#define LED_PORT_SET	
+#define LED_ALL_OFF		UNLOCK_LED_SetLow();LOCK_LED_SetLow();
+
+#define LED_14443A_ON	UNLOCK_LED_SetHigh();
+#define LED_14443A_OFF	UNLOCK_LED_SetLow();
+#define LED_14443B_ON	
+#define LED_14443B_OFF	
+#define LED_15693_ON	
+#define LED_15693_OFF	
+
+#define SLAVE_SELECT_PORT_SET	
+#define SLAVE_SELECT_HIGH		TRF_SS_SetHigh();
+#define SLAVE_SELECT_LOW		TRF_SS_SetLow();
+
+#elif MSP430_CONFIG
 
 #define TRF_ENABLE_SET	P2DIR |= BIT2		// P2.2 is switched in output direction
 #define	TRF_ENABLE		P2OUT |= BIT2		// EN pin on the TRF7970A
@@ -75,13 +112,22 @@
 #define SLAVE_SELECT_HIGH		P2OUT |= BIT1;
 #define SLAVE_SELECT_LOW		P2OUT &= ~BIT1;
 
+#endif
 //-----Counter-timer constants-----------------------------------
+
+#ifdef PIC18F46Q71_CONFIG
+#define COUNTER_VALUE 	Timer1_Read(); //TA0CCR0					//counter register
+#define START_COUNTER   Timer1_Start(); //	TA0CTL |=  MC0			//start counter in up mode
+#define STOP_COUNTER	Timer1_Stop(); //TA0CTL &= ~(MC0 + MC1)	//stops the counter
+#define RESET_COUNTER   Timer1_Write(0);//TA0CTL |= TACLR	    	//Resets and stops counter.
+
+#elif MSP430_CONFIG
 
 #define COUNTER_VALUE	TA0CCR0					//counter register
 #define START_COUNTER	TA0CTL |=  MC0			//start counter in up mode
 #define STOP_COUNTER	TA0CTL &= ~(MC0 + MC1)	//stops the counter
 #define RESET_COUNTER   TA0CTL |= TACLR	    	//Resets and stops counter.
-
+#endif
 //===============================================================
 
 #define DELAY_1ms		8000	// Used for McuDelayMillisecond

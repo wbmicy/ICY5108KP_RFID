@@ -135,15 +135,18 @@ SPI_rawWrite(uint8_t * pui8Buffer, uint8_t ui8Length, bool bContinuedSend)
 
 	while(ui8Length-- > 0)
 	{
-		// Check if USCI_B0 TX buffer is ready
-		while (!(IFG2 & UCB0TXIFG));
-
-		// Transmit data
-		UCB0TXBUF = *pui8Buffer;
-
-		while(UCB0STAT & UCBUSY);	// Wait while SPI state machine is busy
-
-		pui8Buffer++;
+            SPI_sendByte(*pui8Buffer);
+            pui8Buffer++;
+            
+//            // Check if USCI_B0 TX buffer is ready
+//            while (!(IFG2 & UCB0TXIFG));
+//
+//            // Transmit data
+//            UCB0TXBUF = *pui8Buffer;
+//
+//            while(UCB0STAT & UCBUSY);	// Wait while SPI state machine is busy
+//
+//            pui8Buffer++;
 	}
 
 	// Stop SPI Mode
@@ -244,11 +247,12 @@ SPI_readSingle(uint8_t * pui8Buffer)
 
 uint8_t SPI_receiveByte(void)
 {
-	UCB0TXBUF = 0x00;
-
-	while (UCB0STAT & UCBUSY);
-
-	return UCB0RXBUF;
+    return SPI1_ByteExchange(0x00);
+//    UCB0TXBUF = 0x00;
+//
+//    while (UCB0STAT & UCBUSY);
+//
+//    return UCB0RXBUF;
 }
 
 //===============================================================
@@ -257,9 +261,10 @@ uint8_t SPI_receiveByte(void)
 
 void SPI_sendByte(uint8_t ui8TxByte)
 {
-	UCB0TXBUF = ui8TxByte;
-
-	while (UCB0STAT & UCBUSY);
+    SPI1_ByteExchange(ui8TxByte);
+//    UCB0TXBUF = ui8TxByte;
+//
+//    while (UCB0STAT & UCBUSY);
 }
 
 //===============================================================
@@ -282,22 +287,25 @@ void SPI_sendByte(uint8_t ui8TxByte)
 void
 SPI_usciSet(void)								//Uses USCI_B0
 {
-	UCB0CTL1 |= UCSWRST;						// Enable SW reset
-	UCB0CTL0 |= UCMSB + UCMST + UCSYNC;			// 3-pin, 8-bit SPI master
-#if (TRF79xxA_VERSION == 60)
-	UCB0CTL0 |= UCCKPH;
-#endif
-	UCB0CTL1 |= UCSSEL_2;						// Source from SMCLK
 
-	UCB0BR0 = 0x04;
-	UCB0BR1 = 0;
-	P1SEL |= BIT5 + BIT6 + BIT7;				// P1.5,1.6,1.7 UCBOCLK,UCB0SIMO,UCB0SOMI, option select
-	P1SEL2 |= BIT5 + BIT6 + BIT7;				// P1.5,1.6,1.7 UCBOCLK,UCB0SIMO,UCB0SOMI, option select
-
-	SLAVE_SELECT_PORT_SET;						// Set the Slave Select Port
-	SLAVE_SELECT_HIGH;							// Slave Select => inactive (high)
-
-	UCB0CTL1 &= ~UCSWRST;						// **Initialize USCI state machine**
+//    UCB0CTL1 |= UCSWRST;						// Enable SW reset
+//    UCB0CTL0 |= UCMSB + UCMST + UCSYNC;			// 3-pin, 8-bit SPI master
+//#if (TRF79xxA_VERSION == 60)
+//    UCB0CTL0 |= UCCKPH;
+//#endif
+//    UCB0CTL1 |= UCSSEL_2;						// Source from SMCLK
+//
+//    UCB0BR0 = 0x04;
+//    UCB0BR1 = 0;
+//    P1SEL |= BIT5 + BIT6 + BIT7;				// P1.5,1.6,1.7 UCBOCLK,UCB0SIMO,UCB0SOMI, option select
+//    P1SEL2 |= BIT5 + BIT6 + BIT7;				// P1.5,1.6,1.7 UCBOCLK,UCB0SIMO,UCB0SOMI, option select
+//
+    SLAVE_SELECT_PORT_SET;						// Set the Slave Select Port
+    SLAVE_SELECT_HIGH;							// Slave Select => inactive (high)
+//
+//    UCB0CTL1 &= ~UCSWRST;						// **Initialize USCI state machine**
+    
+    SPI1_Open(SPI1_DEFAULT);
 }
 
 

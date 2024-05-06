@@ -55,7 +55,7 @@
 // board to each other. The two pins above them on the "Emulation" side of the
 // board should also be tied together horizontally.
 
-#define ENABLE_HOST
+//#define ENABLE_HOST
 
 //===============================================================
 

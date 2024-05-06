@@ -1,3 +1,62 @@
+ /*
+ * MAIN Generated Driver File
+ * 
+ * @file main.c
+ * 
+ * @defgroup main MAIN
+ * 
+ * @brief This is the generated driver implementation file for the MAIN driver.
+ *
+ * @version MAIN Driver Version 1.0.0
+*/
+
+/*
+© [2024] Microchip Technology Inc. and its subsidiaries.
+
+    Subject to your compliance with these terms, you may use Microchip 
+    software and any derivatives exclusively with Microchip products. 
+    You are responsible for complying with 3rd party license terms  
+    applicable to your use of 3rd party software (including open source  
+    software) that may accompany Microchip software. SOFTWARE IS ?AS IS.? 
+    NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, APPLY TO THIS 
+    SOFTWARE, INCLUDING ANY IMPLIED WARRANTIES OF NON-INFRINGEMENT,  
+    MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT 
+    WILL MICROCHIP BE LIABLE FOR ANY INDIRECT, SPECIAL, PUNITIVE, 
+    INCIDENTAL OR CONSEQUENTIAL LOSS, DAMAGE, COST OR EXPENSE OF ANY 
+    KIND WHATSOEVER RELATED TO THE SOFTWARE, HOWEVER CAUSED, EVEN IF 
+    MICROCHIP HAS BEEN ADVISED OF THE POSSIBILITY OR THE DAMAGES ARE 
+    FORESEEABLE. TO THE FULLEST EXTENT ALLOWED BY LAW, MICROCHIP?S 
+    TOTAL LIABILITY ON ALL CLAIMS RELATED TO THE SOFTWARE WILL NOT 
+    EXCEED AMOUNT OF FEES, IF ANY, YOU PAID DIRECTLY TO MICROCHIP FOR 
+    THIS SOFTWARE.
+*/
+#include "mcc_generated_files/system/system.h"
+
+/*
+    Main application
+*/
+
+//int main(void)
+//{
+//    SYSTEM_Initialize();
+//
+//    // If using interrupts in PIC18 High/Low Priority Mode you need to enable the Global High and Low Interrupts 
+//    // If using interrupts in PIC Mid-Range Compatibility Mode you need to enable the Global Interrupts 
+//    // Use the following macros to: 
+//
+//    // Enable the Global Interrupts 
+//    //INTERRUPT_GlobalInterruptEnable(); 
+//
+//    // Disable the Global Interrupts 
+//    //INTERRUPT_GlobalInterruptDisable(); 
+//
+//
+//    while(1)
+//    {
+//    }    
+//}
+
+
 /*
  * File Name: main.c
  *
@@ -99,70 +158,70 @@
 
 void main(void)
 {
-	uint8_t ui8VLOCalibCount;
+    SYSTEM_Initialize();
 
-//	TODO: Remove LED2 Jumper on G2 LaunchPad if using it, otherwise SPI will not work.
+    // If using interrupts in PIC18 High/Low Priority Mode you need to enable the Global High and Low Interrupts 
+    // If using interrupts in PIC Mid-Range Compatibility Mode you need to enable the Global Interrupts 
+    // Use the following macros to: 
 
-	// Stop the Watchdog timer,
- 	WDTCTL = WDTPW + WDTHOLD;
+    // Enable the Global Interrupts 
+    //INTERRUPT_GlobalInterruptEnable(); 
 
-	// Select DCO to be 8 MHz
- 	MCU_initClock();
- 	MCU_delayMillisecond(10);
+    // Disable the Global Interrupts 
+    //INTERRUPT_GlobalInterruptDisable();
+	
 
- 	// Calibrate VLO
- 	MCU_calculateVLOFreq();
+    // Set the SPI SS high
+    SLAVE_SELECT_PORT_SET;
+    SLAVE_SELECT_HIGH;
 
-	// Set the SPI SS high
-	SLAVE_SELECT_PORT_SET;
-	SLAVE_SELECT_HIGH;
+    // Four millisecond delay between bringing SS high and then EN high per TRF7970A Datasheet
+    MCU_delayMillisecond(4);
 
-	// Four millisecond delay between bringing SS high and then EN high per TRF7970A Datasheet
-	MCU_delayMillisecond(4);
+    // Set TRF Enable Pin high
+    TRF_ENABLE_SET;
+    TRF_ENABLE;
 
-	// Set TRF Enable Pin high
-	TRF_ENABLE_SET;
-	TRF_ENABLE;
+    // Wait until TRF system clock started
+    MCU_delayMillisecond(5);
 
-	// Wait until TRF system clock started
-	MCU_delayMillisecond(5);
-
-	// Set up TRF initial settings
-	TRF79xxA_initialSettings();
-	TRF79xxA_setTrfPowerSetting(TRF79xxA_3V_FULL_POWER);
-
-#ifdef ENABLE_HOST
-	// Set up UART
-	UART_setup();
-#endif
-
-	// Initialize all enabled technology layers
-	NFC_init();
-
-	// Enable global interrupts
-	__bis_SR_register(GIE);
-
-	// Enable IRQ Pin
-	IRQ_ON;
+    // Set up TRF initial settings
+    TRF79xxA_initialSettings();
+    TRF79xxA_setTrfPowerSetting(TRF79xxA_3V_FULL_POWER);
 
 #ifdef ENABLE_HOST
-	UART_putIntroReaderMsg(RFID_READER_FW_VERSION, RFID_READER_FW_DATE);
+    // Set up UART
+    UART_setup();
 #endif
 
-	while(1)
-	{
-		// Poll for NFC tags
-		NFC_findTag();
+    // Initialize all enabled technology layers
+    NFC_init();
 
-		// VLO drifts with temperature and over time, so it must be periodically recalibrated
-		// Calibrate the VLO every 25 passes of the NFC polling routine
-		ui8VLOCalibCount++;
-		if (ui8VLOCalibCount == 25)
-		{
-			// Calibrate VLO
-			MCU_calculateVLOFreq();
-			// Reset Calibration Counter
-		 	ui8VLOCalibCount = 0;
-		}
-	}
+    // Enable global interrupts
+    INTERRUPT_GlobalInterruptEnable();//__bis_SR_register(GIE);
+
+    // Enable IRQ Pin
+    IRQ_ON;
+
+#ifdef ENABLE_HOST
+    UART_putIntroReaderMsg(RFID_READER_FW_VERSION, RFID_READER_FW_DATE);
+#endif
+
+    while(1)
+    {
+        // Poll for NFC tags
+        NFC_findTag();
+
+        //Comment out, specific for st MCU
+        // VLO drifts with temperature and over time, so it must be periodically recalibrated
+        // Calibrate the VLO every 25 passes of the NFC polling routine
+//        ui8VLOCalibCount++;
+//        if (ui8VLOCalibCount == 25)
+//        {
+//            // Calibrate VLO
+//            MCU_calculateVLOFreq();
+//            // Reset Calibration Counter
+//            ui8VLOCalibCount = 0;
+//        }
+    }
 }
