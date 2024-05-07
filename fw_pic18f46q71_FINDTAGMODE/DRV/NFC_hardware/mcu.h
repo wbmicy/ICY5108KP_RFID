@@ -71,8 +71,8 @@
 #define LED_PORT_SET	
 #define LED_ALL_OFF		UNLOCK_LED_SetLow();LOCK_LED_SetLow();
 
-#define LED_14443A_ON	UNLOCK_LED_SetHigh();
-#define LED_14443A_OFF	UNLOCK_LED_SetLow();
+#define LED_14443A_ON	UNLOCK_LED_SetLow();
+#define LED_14443A_OFF	UNLOCK_LED_SetHigh();
 #define LED_14443B_ON	
 #define LED_14443B_OFF	
 #define LED_15693_ON	
